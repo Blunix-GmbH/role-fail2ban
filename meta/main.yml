@@ -1,16 +1,18 @@
 galaxy_info:
-  author: Peter Thurner
+
+  description: installs and configures fail2ban
+  author: Brian Wiborg and Peter Thurner
   company: Blunix GmbH
-  license: Apache
-  min_ansible_version: 1.2
+  license: Apache2
+  min_ansible_version: 2.9.10
+
   platforms:
   - name: Debian
     versions:
-    - stretch
-  - name: Ubuntu
-    versions:
-    - xenial
+    - bullseye
+
   galaxy_tags:
+  - blunix
   - fail2ban
 
 dependencies: []

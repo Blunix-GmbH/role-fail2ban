@@ -1,15 +1,21 @@
----
-fail2ban_enabled: no
-fail2ban_default_bantime: 600
-fail2ban_default_maxretry: 5
+# default settings
+fail2ban_default_bantime: 86400
+fail2ban_default_maxretry: 4
 fail2ban_default_destemail: monitoring-example@example.com
 fail2ban_default_banaction: iptables-multiport
-fail2ban_jails:
+
+
+# jails
+fail2ban_jails: "{{ fail2ban_jails_default + fail2ban_jails_custom | default([]) }}"
+fail2ban_jails_default:
+
   - name: default
     vars:
       DEFAULT:
+        ignoreip: '127.0.0.1'
         backend: auto
-        banaction: iptables-multiport
+        banaction: iptables-ipset-proto4
+
   - name: sshd
     vars:
       sshd:
@@ -17,16 +23,22 @@ fail2ban_jails:
           - 'iptables-multiport[name=SSH, port=ssh, protocol=all]'
         enabled: 'true'
         filter: sshd
-        maxretry: 6
+        maxretry: 4
         port: ssh
       sshd_ddos:
         action:
           - 'iptables-multiport[name=SSH, port=ssh, protocol=tcp]'
         enabled: 'true'
         filter: 'sshd-ddos'
-        maxretry: 6
+        maxretry: 4
         port: ssh
-fail2ban_actions: []
-fail2ban_filters:
-  download: []
-  custom: []
+
+
+# actions
+fail2ban_actions: "{{ fail2ban_actions_default + fail2ban_actions_custom | default([]) }}"
+fail2ban_actions_default: []
+
+
+# custom filters
+fail2ban_filters_custom: []
+fail2ban_filters_download: []

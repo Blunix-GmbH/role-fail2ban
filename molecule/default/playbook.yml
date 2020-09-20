@@ -1,7 +1,49 @@
----
 - name: Converge
   hosts: all
-  become: yes
+  become: True
   roles:
     - role: role-fail2ban
+  vars:
+  
+  
+    fail2ban_jails_custom:
+      - name: openvpn
+        vars:
+          openvpn:
+            enabled: 'true'
+            filter: openvpn
+            maxretry: 6
+            port: 1194
 
+
+    fail2ban_actions_custom:
+      - name: test
+        vars:
+          includes:
+            before: iptables-common.conf
+          Definition:
+            actionstart: foo
+            actionflush: bar
+            actionstop: qux
+            actionban: bla
+            actionunban: keks
+          Init: {}
+
+
+    fail2ban_filters_custom:
+      # From http://www.fail2ban.org/wiki/index.php/HOWTO_fail2ban_with_OpenVPN
+      - name: openvpn
+        vars:
+          Definition:
+            ignoreregex: ''
+            failregex: |
+                ^ TLS Error: incoming packet authentication failed from \[AF_INET\]<HOST>:\d+$
+                            ^ <HOST>:\d+ Connection reset, restarting
+                            ^ <HOST>:\d+ TLS Auth Error
+                            ^ <HOST>:\d+ TLS Error: TLS handshake failed$
+                            ^ <HOST>:\d+ VERIFY ERROR
+
+
+    #fail2ban_filters_download:
+    #  - name: foobar
+    #    url: https://foo.bar.com/foobar
